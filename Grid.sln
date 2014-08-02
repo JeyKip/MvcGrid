@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcGrid", "MvcGrid\MvcGrid.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcGrid.Test", "MvcGrid.Test\MvcGrid.Test.csproj", "{C22812C7-CD75-4006-96A2-2F8465E9985D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcGridExamples", "MvcGridExamples\MvcGridExamples.csproj", "{E90CF517-2162-4BFB-AE8E-99AB69DF0CCD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{C22812C7-CD75-4006-96A2-2F8465E9985D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C22812C7-CD75-4006-96A2-2F8465E9985D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C22812C7-CD75-4006-96A2-2F8465E9985D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E90CF517-2162-4BFB-AE8E-99AB69DF0CCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E90CF517-2162-4BFB-AE8E-99AB69DF0CCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E90CF517-2162-4BFB-AE8E-99AB69DF0CCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E90CF517-2162-4BFB-AE8E-99AB69DF0CCD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

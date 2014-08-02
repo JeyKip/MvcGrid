@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
 namespace MvcGrid
 {
@@ -11,7 +6,10 @@ namespace MvcGrid
     {
         public static MvcHtmlString Grid(this HtmlHelper htmlHelper, GridSettings settings)
         {
-            return new MvcHtmlString("");
+            if (settings == null)
+                return new MvcHtmlString("");
+
+            return new MvcHtmlString(settings.ToString());
         }
     }
 }

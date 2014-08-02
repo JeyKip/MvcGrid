@@ -41,10 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataFormat\JsonData.cs" />
     <Compile Include="Enums\GridDataType.cs" />
+    <Compile Include="Enums\SortOrder.cs" />
+    <Compile Include="Enums\TextAlign.cs" />
     <Compile Include="GridColumn.cs" />
     <Compile Include="GridSettings.cs" />
+    <Compile Include="JsonReader.cs" />
+    <Compile Include="JsonReaderSubGrid.cs" />
     <Compile Include="MvcGrid.cs" />
+    <Compile Include="Navigator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
