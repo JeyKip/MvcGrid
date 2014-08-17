@@ -6,92 +6,70 @@
     <link rel="stylesheet" type="text/css" href="~/Content/jquery.jqGrid/ui.jqgrid.css" />
 }
 
-<table id="gridId"></table>
-<div id="navId"></div>
-
 @section Scripts
 {
     @Scripts.Render("~/bundles/jqueryui")
     <script type="text/javascript" src="~/Scripts/i18n/grid.locale-en.js"></script>
     <script type="text/javascript" src="~/Scripts/jquery.jqGrid.js"></script>
-    <script type="text/javascript">
-        @Html.Grid(new GridSettings()
-        {
-            GridId = "gridId",
-            URL = "/Home/GetData",
-            DataType = GridDataType.Json,
-            RowNumber = 25,
-            RowList = new int[] { 25, 50, 100 },
-            Pager = "pager",
-            Sortname = "VisitTime",
-            ViewRecords = true,
-            Sortorder = SortOrder.Asc,
-            Caption = "Caption",
-            Hidegrid = false,
-            Height = "100%",
-            JsonReader = new JsonReader()
-            {
-                RepeatItems = false
-            },
-            Navigator = new Navigator()
-            {
-                Add = false,
-                Edit = false,
-                Delete = false,
-                Refresh = false,
-                Search = false
-            },
-            Columns = new GridColumn[] 
-            {
-                new GridColumn(){ Name = "UserAgent", Label="User Agent", Width = 670, Sortable = false },
-                new GridColumn(){ Name = "ScreenSize", Label="Screen Size", Width = 70, Sortable = false },
-                new GridColumn(){ Name = "Referer", Label="Referer", Width = 100, Sortable = false },
-                new GridColumn(){ Name = "VisitTime", Label="Visit Time", Width = 120, Sortable = false }
-            }
-        })
-        //$(function () {
-        //    $('#gridId').jqGrid({
-        //        url: '/Home/GetData',
-        //        datatype: "json",
-        //        colNames: [
-        //            "UserAgent",
-        //            "ScreenSize",
-        //            "Referer",
-        //            "VisitTime"
-        //        ],
-        //        colModel: [
-        //            { name: 'UserAgent', width: 670, sortable: false },
-        //            { name: 'ScreenSize', width: 70, sortable: false },
-        //            { name: 'Referer', width: 100, sortable: false },
-        //            { name: 'VisitTime', width: 120, sortable: false, formatter: 'date', formatoptions: { newformat: "Y-m-d H:m:s" } }
-        //        ],
-        //        rowNum: 25,
-        //        rowList: [25, 50, 100],
-        //        pager: $('#pager'),
-        //        sortname: 'VisitTime',
-        //        viewrecords: true,
-        //        sortorder: "asc",
-        //        caption: "Caption",
-        //        hidegrid: true,
-        //        height: "100%",
-        //        jsonReader: {
-        //            root: "rows",
-        //            page: "page",
-        //            total: "total",
-        //            records: "records",
-        //            repeatitems: false,
-        //            userdata: "userdata"
-        //        }
-        //    });
-
-        //    $('#gridId').navGrid('#pager',
-        //    {
-        //        edit: false,
-        //        add: false,
-        //        del: false,
-        //        search: false,
-        //        refresh: false
-        //    });
-        //});
-    </script>
+    @Html.Grid((new GridSettings())
+    .SetUrl("/Home/GetData")
+    .SetDataType(GridDataType.Json)
+    .SetRowNumber(25)
+    .SetRowList(25, 50, 100)
+    .SetViewRecords(true)
+    .SetSortName("VisitTime")
+    .SetSortOrder(SortOrder.Asc)
+    .SetCaption("Caption")
+    .SetHideGrid(false)
+    .SetHeight("100%")
+    .AddNavigator((new Navigator())
+                    .SetAddButtonVisibility(false)
+                    .SetEditButtonVisibility(false)
+                    .SetDeleteButtonVisibility(false)
+                    .SetSearchButtonVisibility(false)
+                    .SetRefreshButtonVisibility(false))
+    .AddJsonReader(JsonReader.Default)
+    .AddColumn((new GridFormatterColumn())
+                .SetName("UserAgent")
+                .SetLabel("User Agent")
+                .SetWidth(670)
+                .SetSortable(false))
+    .AddColumn((new GridFormatterColumn())
+                .SetName("ScreenSize")
+                .SetLabel("Screen Size")
+                .SetWidth(70)
+                .SetSortable(false))
+    .AddColumn((new GridFormatterColumn())
+                .SetName("Referer")
+                .SetLabel("Referer")
+                .SetWidth(100)
+                .SetSortable(false))
+    .AddColumn((new GridFormatterColumn())
+                .SetFormatter("date")
+                .SetFormatOption("newformat", "Y-m-d H:i:s")
+                .SetFormatOption("srcformat", "Y-m-d H:i:s")
+                .SetName("VisitTime")
+                .SetLabel("Visit Time")
+                .SetWidth(150)
+                .SetSortable(false))
+    .AddColumn((new GridFormatterColumn())
+                .SetFormatter("number")
+                .SetFormatOption("decimalPlaces", 4)
+                .SetName("VisitNumber")
+                .SetLabel("Visit Number")
+                .SetWidth(100))
+    .AddColumn((new GridImageColumn())
+                .AddImage((new GridImage())
+                            .SetImagePath("/Content/images/b_red_16.png")
+                            .DisplayWhen(x=> x["Status"] == "0")
+                            .SetToolTip("Blocked"))
+                .AddImage((new GridImage())
+                            .SetImagePath("/Content/images/b_green_16.png")
+                            .DisplayWhen(x=> x["Status"] == "1")
+                            .SetToolTip("Active"))
+                .SetName("Status") 
+                .SetLabel("Status")
+                .SetWidth(50)
+                .SetAlign(TextAlign.Center)
+                .SetSortable(false)))
 }

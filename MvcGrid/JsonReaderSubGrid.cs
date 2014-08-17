@@ -7,34 +7,38 @@ namespace MvcGrid
 {
     public class JsonReaderSubGrid
     {
-        private string _root = "Rows";
+        private List<string> properties = new List<string>();
+        
         /// <summary>
         /// This element describes where our data begins. In other words, this points to the array that contains the data. Default value - "Rows"
         /// </summary>
-        public string Root
+        public JsonReaderSubGrid SetRootElementName(string root)
         {
-            get { return _root; }
-            set { _root = value; }
+            properties.Add(string.Format("root: '{0}'", root));
+            return this;
         }
 
-        private bool _repeatitems = true;
         /// <summary>
-        /// Tells jqGrid that the information for the data in the row is repeatable - i.e. the elements have the same tag cell described in cell element. Setting this option to false instructs jqGrid to search elements in the json data by name
+        /// Tells jqGrid that the information for the data in the row is repeatable - i.e. the elements have the same tag cell described in cell element. Setting this option to false instructs jqGrid to search elements in the json data by name. Default value is false
         /// </summary>
-        public bool RepeatItems
+        public JsonReaderSubGrid SetRepeatItemsElementName(bool repeatitems)
         {
-            get { return _repeatitems; }
-            set { _repeatitems = value; }
+            properties.Add(string.Format("repeatitems: '{0}'", repeatitems.ToString().ToLower()));
+            return this;
         }
 
         /// <summary>
         /// An array that contains the data for a row
         /// </summary>
-        public string Cell { get; set; }
+        public JsonReaderSubGrid SetCell(string cell)
+        {
+            properties.Add(string.Format("cell: '{0}'", cell));
+            return this;
+        }
 
         public override string ToString()
         {
-            return string.Format("root: '{0}', repeatitems: {1}, cell: '{2}'", Root, RepeatItems.ToString().ToLower(), Cell);
+            return string.Join(", ", properties);
         }
     }
 }

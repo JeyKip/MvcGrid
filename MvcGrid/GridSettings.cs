@@ -7,130 +7,187 @@ namespace MvcGrid
 {
     public class GridSettings
     {
-        public string GridId { get; set; }
+        private List<string> properties = new List<string>();
+        private List<GridColumnBase> columns = new List<GridColumnBase>();
+        private Navigator navigator = new Navigator();
+
         /// <summary>
         /// The url of the file that returns the data needed to populate the grid
         /// </summary>
-        public string URL { get; set; }
+        public GridSettings SetUrl(string url)
+        {
+            properties.Add(string.Format("url: '{0}'", url));
+            return this;
+        }
 
         /// <summary>
         /// Defines in what format to expect the data that fills the grid
         /// </summary>
-        public GridDataType DataType { get; set; }
-
-        private int rowNum = 20;
-        /// <summary>
-        /// Sets how many records we want to view in the grid
-        /// </summary>
-        public int RowNumber
+        public GridSettings SetDataType(GridDataType dataType)
         {
-            get { return rowNum; }
-            set { rowNum = value; }
+            properties.Add(string.Format("datatype: '{0}'", dataType));
+            return this;
+        }
+
+        /// <summary>
+        /// Sets how many records we want to view in the grid. Default value is 20
+        /// </summary>
+        public GridSettings SetRowNumber(int rowNumber)
+        {
+            properties.Add(string.Format("rowNum: {0}", rowNumber));
+            return this;
         }
 
         /// <summary>
         /// An array to construct a select box element in the pager in which we can change the number of the visible rows
         /// </summary>
-        public int[] RowList { get; set; }
+        public GridSettings SetRowList(params int[] rowList)
+        {
+            properties.Add(string.Format("rowList: [{0}]", string.Join(", ", rowList)));
+            return this;
+        }
 
         /// <summary>
-        /// If true, jqGrid displays the beginning and ending record number in the grid, out of the total number of records in the query. This information is shown in the pager bar (bottom right by default)in this format: “View X to Y out of Z”
+        /// If true, jqGrid displays the beginning and ending record number in the grid, out of the total number of records in the query. This information is shown in the pager bar (bottom right by default)in this format: “View X to Y out of Z”. Default value is false
         /// </summary>
-        public bool ViewRecords { get; set; }
+        public GridSettings SetViewRecords(bool viewRecords)
+        {
+            properties.Add(string.Format("viewrecords: {0}", viewRecords.ToString().ToLower()));
+            return this;
+        }
 
         /// <summary>
         /// The string to display when the returned (or the current) number of records in the grid is zero. This option is valid only if ViewRecords option is set to true
         /// </summary>
-        public string EmptyRecords { get; set; }
-
-        /// <summary>
-        /// ID of html div-element
-        /// </summary>
-        public string Pager { get; set; }
+        public GridSettings SetEmptyRecords(string emptyRecordsText)
+        {
+            properties.Add(string.Format("emptyrecords: '{0}'", emptyRecordsText));
+            return this;
+        }
 
         /// <summary>
         /// The column according to which the data is to be sorted when it is initially loaded from the server
         /// </summary>
-        public string Sortname { get; set; }
+        public GridSettings SetSortName(string sortName)
+        {
+            properties.Add(string.Format("sortname: '{0}'", sortName));
+            return this;
+        }
 
         /// <summary>
         /// The initial sorting order (ascending or descending) when we fetch data from the server using datatypes xml or json
         /// </summary>
-        public SortOrder Sortorder { get; set; }
+        public GridSettings SetSortOrder(SortOrder sortOrder)
+        {
+            properties.Add(string.Format("sortorder: '{0}'", sortOrder.ToString().ToLower()));
+            return this;
+        }
 
         /// <summary>
         /// Defines the caption for the grid. This caption appears in the caption layer, which is above the header layer. If the string is empty the caption does not appear
         /// </summary>
-        public string Caption { get; set; }
+        public GridSettings SetCaption(string caption)
+        {
+            properties.Add(string.Format("caption: '{0}'", caption));
+            return this;
+        }
 
-        private bool _hidegrid = true;
         /// <summary>
         /// Enables or disables the show/hide grid button, which appears on the right side of the caption layer. Takes effect only if the caption property is not an empty string
         /// </summary>
-        public bool Hidegrid
+        public GridSettings SetHideGrid(bool hideGrid)
         {
-            get { return _hidegrid; }
-            set { _hidegrid = value; }
+            properties.Add(string.Format("hidegrid: {0}", hideGrid.ToString().ToLower()));
+            return this;
         }
 
-        private string _height = "150";
         /// <summary>
         /// The height of the grid. Can be set as number (in this case we mean pixels) or as percentage (only 100% is acceped) or value of auto is acceptable
         /// </summary>
-        public string Height
+        public GridSettings SetHeight(string height)
         {
-            get { return _height; }
-            set { _height = value; }
-        }
-
-        private Navigator _navigator = new Navigator();
-        public Navigator Navigator
-        {
-            get { return _navigator; }
-            set { _navigator = value; }
-        }
-
-        private JsonReader _jsonReader = new JsonReader();
-        public JsonReader JsonReader
-        {
-            get { return _jsonReader; }
-            set { _jsonReader = value; }
+            properties.Add(string.Format("height: '{0}'", height));
+            return this;
         }
 
         /// <summary>
-        /// Array which describes the parameters of the columns
+        /// Add new column information
         /// </summary>
-        public GridColumn[] Columns { get; set; }
+        public GridSettings AddColumn(GridColumnBase column)
+        {
+            columns.Add(column);
+            return this;
+        }
+
+        public GridSettings AddNavigator(Navigator _navigator)
+        {
+            navigator = _navigator;
+            return this;
+        }
+
+        public GridSettings AddJsonReader(JsonReader jsonReader)
+        {
+            if (jsonReader != null)
+                properties.Add(string.Format("jsonReader: {{{0}}}", jsonReader));
+
+            return this;
+        }
+
+        protected string GridSettingsPattern
+        {
+            get
+            {
+                return
+@"<table id=""@gridId""></table>
+<div id=""@navigatorId""></div>
+<script type=""text/javascript"">
+    $(function(){
+        $('#@gridId').jqGrid({
+            @Properties,
+            colModel: [@ColModel],
+            pager: '#@navigatorId'
+        });
+        $('#@gridId').navGrid('#@navigatorId', {
+            @Navigator
+        });
+    });
+@CustomFormatters
+</script>";
+            }
+        }
 
         public override string ToString()
         {
-            if (string.IsNullOrWhiteSpace(GridId))
-                throw new InvalidOperationException("GridId must be setted");
-
-            StringBuilder grid = new StringBuilder();
-            grid.AppendFormat("$(function(){{$('#{0}').jqGrid({{", GridId);
-            grid.AppendFormat("url: '{0}',", string.IsNullOrWhiteSpace(URL) ? "null" : URL);
-            grid.AppendFormat("datatype: '{0}',", DataType.ToString().ToLower());
-            grid.AppendFormat("rowNum: {0},", RowNumber);
-            grid.AppendFormat("rowList: [{0}],", string.Join(", ", RowList));
-            grid.AppendFormat("viewrecords: {0},", ViewRecords.ToString().ToLower());
-            grid.AppendFormat("emptyrecords: '{0}',", EmptyRecords);
-            grid.AppendFormat("colModel: [{0}],", string.Join(", ", Columns.Select(x => string.Format("{{{0}}}", x.ToString()))));
-            grid.AppendFormat("pager: '#{0}',", Pager);
-            grid.AppendFormat("sortname: '{0}',", Sortname);
-            grid.AppendFormat("sortorder: '{0}',", Sortorder.ToString().ToLower());
-            grid.AppendFormat("caption: '{0}',", Caption);
-            grid.AppendFormat("hidegrid: {0},", Hidegrid.ToString().ToLower());
-            grid.AppendFormat("height: '{0}',", Height);
-
-            if (DataType == GridDataType.Json || DataType == GridDataType.Jsonp || DataType == GridDataType.JsonString)
-                grid.AppendFormat("jsonReader: {{{0}}}", JsonReader.ToString());
-
-            grid.Append("});");
-
-            grid.AppendFormat("$('#{0}').navGrid('#{1}', {{{2}}});", GridId, Pager, Navigator.ToString());
-            grid.Append("});");
-            return grid.ToString();
+            return GridSettingsPattern
+                .Replace("@gridId", GridId)
+                .Replace("@navigatorId", Pager)
+                .Replace("@ColModel", string.Join(", ", columns.Select(x => string.Format("{{{0}}}", x.ToString()))))
+                .Replace("@Navigator", navigator == null ? string.Empty : navigator.ToString())
+                .Replace("@Properties", string.Join(",\n", properties))
+                .Replace("@CustomFormatters", string.Join("\n",
+                columns.Where(x => x is ICustomFormatterColumn)
+                       .Select(x => (x as ICustomFormatterColumn).GetFormatter())));
         }
+
+        #region Protected Members
+        private string _gridId = string.Empty;
+        protected virtual string GridId
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_gridId))
+                    _gridId = string.Format("Grid{0}", Guid.NewGuid());
+                return _gridId;
+            }
+        }
+
+        protected virtual string Pager
+        {
+            get
+            {
+                return string.Format("Pager{0}", GridId);
+            }
+        }
+        #endregion
     }
 }

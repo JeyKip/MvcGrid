@@ -6,91 +6,117 @@ using System.Threading.Tasks;
 
 namespace MvcGrid
 {
-    /// <summary>
-    /// You can use JsonData class for returning data
-    /// </summary>
     public class JsonReader
     {
-        private string _root = "Rows";
+        private List<string> properties = new List<string>();
+
         /// <summary>
-        /// This element describes where our data begins. In other words, this points to the array that contains the data. Default value - "Rows"
+        /// Returns JsonReader instance with default settings:
+        /// <para>total: TotalPages</para>
+        /// <para>page: CurrentPage</para>
+        /// <para>records: Records</para>
+        /// <para>root: Rows</para>
+        /// <para>userdata: UserData</para>
+        /// <para>repeatitems: false</para>
+        /// You can use MvcGrid.DataFormat.JsonData for packing returning values
         /// </summary>
-        public string Root
+        public static JsonReader Default
         {
-            get { return _root; }
-            set { _root = value; }
+            get 
+            {
+                return (new JsonReader())
+                        .SetTotalElementName("TotalPages")
+                        .SetCurrentPageElementName("CurrentPage")
+                        .SetRecordsElementName("Records")
+                        .SetRootElementName("Rows")
+                        .SetUserDataElementName("UserData")
+                        .SetRepeatItemsElementName(false);
+            }
         }
 
-        private string _page = "CurrentPage";
         /// <summary>
-        /// Current page for pager. Default value - CurrentPage
+        /// This element describes where our data begins. In other words, this points to the array that contains the data
         /// </summary>
-        public string Page
+        public JsonReader SetRootElementName(string root)
         {
-            get { return _page; }
-            set { _page = value; }
+            properties.Add(string.Format("root: '{0}'", root));
+            return this;
         }
 
-        private string _total = "TotalPages";
         /// <summary>
-        /// Total number of pages. Default value - TotalPages
+        /// Current page for pager
         /// </summary>
-        public string Total
+        public JsonReader SetCurrentPageElementName(string page)
         {
-            get { return _total; }
-            set { _total = value; }
+            properties.Add(string.Format("page: '{0}'", page));
+            return this;
         }
 
-        private string _records = "Records";
         /// <summary>
-        /// Total number of records. Default value - Records
+        /// Total number of pages
         /// </summary>
-        public string Records
+        public JsonReader SetTotalElementName(string total)
         {
-            get { return _records; }
-            set { _records = value; }
+            properties.Add(string.Format("total: '{0}'", total));
+            return this;
         }
 
-        private bool _repeatitems = true;
         /// <summary>
-        /// Tells jqGrid that the information for the data in the row is repeatable - i.e. the elements have the same tag cell described in cell element. Setting this option to false instructs jqGrid to search elements in the json data by name
+        /// Total number of records
         /// </summary>
-        public bool RepeatItems
+        public JsonReader SetRecordsElementName(string records)
         {
-            get { return _repeatitems; }
-            set { _repeatitems = value; }
+            properties.Add(string.Format("records: '{0}'", records));
+            return this;
+        }
+
+        /// <summary>
+        /// Tells jqGrid that the information for the data in the row is repeatable - i.e. the elements have the same tag cell described in cell element. Setting this option to false instructs jqGrid to search elements in the json data by name. Default value is false
+        /// </summary>
+        public JsonReader SetRepeatItemsElementName(bool repeatitems)
+        {
+            properties.Add(string.Format("repeatitems: {0}", repeatitems.ToString().ToLower()));
+            return this;
         }
 
         /// <summary>
         /// An array that contains the data for a row
         /// </summary>
-        public string Cell { get; set; }
+        public JsonReader SetCell(string cell)
+        {
+            properties.Add(string.Format("cell: '{0}'", cell));
+            return this;
+        }
 
         /// <summary>
         /// Element descibes the unique id for the row
         /// </summary>
-        public string Id { get; set; }
-
-        private string _userData = "UserData";
-        /// <summary>
-        /// Element that contains free user data in json, i.e. "UserData" : {Total: 1200, Tax: 300. Default value - "UserData"
-        /// </summary>
-        public string UserData
+        public JsonReader SetId(string id)
         {
-            get { return _userData; }
-            set { _userData = value; }
+            properties.Add(string.Format("id: '{0}'", id));
+            return this;
         }
 
-        public JsonReaderSubGrid SubGrid { get; set; }
+        /// <summary>
+        /// Element that contains free user data in json, i.e. "UserData" : {Total: 1200, Tax: 300}
+        /// </summary>
+        public JsonReader SetUserDataElementName(string userData)
+        {
+            properties.Add(string.Format("userdata: '{0}'", userData));
+            return this;
+        }
+
+        public JsonReader SetSubGridInfo(JsonReaderSubGrid subGridInfo)
+        {
+            if (subGridInfo != null)
+                properties.Add(string.Format("subgrid: {{{0}}}", subGridInfo));
+            
+            return this;
+        }
 
         public override string ToString()
         {
-            StringBuilder jsonReder = new StringBuilder();
-            jsonReder.AppendFormat("root: '{0}', page: '{1}', total: '{2}', records: '{3}', repeatitems: {4}, cell: '{5}', id: '{6}', userdata: '{7}'", 
-                Root, Page, Total, Records, RepeatItems.ToString().ToLower(), Cell, Id, UserData);
-            if (SubGrid != null)
-                jsonReder.AppendFormat(", subgrid: {{{0}}}", SubGrid.ToString());
-            return jsonReder.ToString();
+            return string.Join(", ", properties);
         }
     }
 }

@@ -1,54 +1,45 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 
 namespace MvcGrid
 {
     public class Navigator
     {
-        private bool _edit = true;
-        public bool Edit
+        private List<string> properties = new List<string>();
+
+        public Navigator SetEditButtonVisibility(bool isVisible)
         {
-            get { return _edit; }
-            set { _edit = value; }
+            properties.Add(string.Format("edit: {0}", isVisible.ToString().ToLower()));
+            return this;
         }
 
-        private bool _add = true;
-        public bool Add
+        public Navigator SetAddButtonVisibility(bool isVisible)
         {
-            get { return _add; }
-            set { _add = value; }
+            properties.Add(string.Format("add: {0}", isVisible.ToString().ToLower()));
+            return this;
         }
 
-        private bool _del = true;
-        public bool Delete
+        public Navigator SetDeleteButtonVisibility(bool isVisible)
         {
-            get { return _del; }
-            set { _del = value; }
+            properties.Add(string.Format("del: {0}", isVisible.ToString().ToLower()));
+            return this;
         }
 
-        private bool _search = true;
-        public bool Search
+        public Navigator SetSearchButtonVisibility(bool isVisible)
         {
-            get { return _search; }
-            set { _search = value; }
+            properties.Add(string.Format("search: {0}", isVisible.ToString().ToLower()));
+            return this;
         }
 
-        private bool _refresh = true;
-        public bool Refresh
+        public Navigator SetRefreshButtonVisibility(bool isVisible)
         {
-            get { return _refresh; }
-            set { _refresh = value; }
+            properties.Add(string.Format("refresh: {0}", isVisible.ToString().ToLower()));
+            return this;
         }
-
 
         public override string ToString()
         {
-            StringBuilder navigator = new StringBuilder();
-            navigator.AppendFormat("edit: {0},", Edit.ToString().ToLower());
-            navigator.AppendFormat("add: {0},", Add.ToString().ToLower());
-            navigator.AppendFormat("del: {0},", Delete.ToString().ToLower());
-            navigator.AppendFormat("search: {0},", Search.ToString().ToLower());
-            navigator.AppendFormat("refresh: {0}", Refresh.ToString().ToLower());
-            return navigator.ToString();
+            return string.Join(", ", properties);
         }
     }
 }
