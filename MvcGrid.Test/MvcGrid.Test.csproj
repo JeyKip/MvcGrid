@@ -62,9 +62,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Columns\FormatOptionTest.cs" />
+    <Compile Include="Columns\GridColumnBaseTest.cs" />
+    <Compile Include="Columns\GridFormatterColumnTest.cs" />
+    <Compile Include="Columns\GridImageColumnTest.cs" />
+    <Compile Include="Columns\GridImageTest.cs" />
     <Compile Include="GridSettingsTest.cs" />
     <Compile Include="Helpers\GridSettings4Test.cs" />
+    <Compile Include="Helpers\PersonInfo.cs" />
+    <Compile Include="JsonReaderTest.cs" />
+    <Compile Include="MvcGridTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilites\FilterConditionToStringConvertorTest.cs" />
+    <Compile Include="Utilites\PropertyResolverTest.cs" />
+    <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

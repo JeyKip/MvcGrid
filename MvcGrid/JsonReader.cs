@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MvcGrid.Utilites;
 
 namespace MvcGrid
 {
     public class JsonReader
     {
-        private List<string> properties = new List<string>();
+        private Dictionary<string, object> properties = new Dictionary<string, object>();
 
         /// <summary>
         /// Returns JsonReader instance with default settings:
@@ -22,7 +20,7 @@ namespace MvcGrid
         /// </summary>
         public static JsonReader Default
         {
-            get 
+            get
             {
                 return (new JsonReader())
                         .SetTotalElementName("TotalPages")
@@ -39,7 +37,7 @@ namespace MvcGrid
         /// </summary>
         public JsonReader SetRootElementName(string root)
         {
-            properties.Add(string.Format("root: '{0}'", root));
+            properties.Add("root", root);
             return this;
         }
 
@@ -48,7 +46,7 @@ namespace MvcGrid
         /// </summary>
         public JsonReader SetCurrentPageElementName(string page)
         {
-            properties.Add(string.Format("page: '{0}'", page));
+            properties.Add("page", page);
             return this;
         }
 
@@ -57,7 +55,7 @@ namespace MvcGrid
         /// </summary>
         public JsonReader SetTotalElementName(string total)
         {
-            properties.Add(string.Format("total: '{0}'", total));
+            properties.Add("total", total);
             return this;
         }
 
@@ -66,7 +64,7 @@ namespace MvcGrid
         /// </summary>
         public JsonReader SetRecordsElementName(string records)
         {
-            properties.Add(string.Format("records: '{0}'", records));
+            properties.Add("records", records);
             return this;
         }
 
@@ -75,7 +73,7 @@ namespace MvcGrid
         /// </summary>
         public JsonReader SetRepeatItemsElementName(bool repeatitems)
         {
-            properties.Add(string.Format("repeatitems: {0}", repeatitems.ToString().ToLower()));
+            properties.Add("repeatitems", repeatitems);
             return this;
         }
 
@@ -84,7 +82,7 @@ namespace MvcGrid
         /// </summary>
         public JsonReader SetCell(string cell)
         {
-            properties.Add(string.Format("cell: '{0}'", cell));
+            properties.Add("cell", cell);
             return this;
         }
 
@@ -93,7 +91,7 @@ namespace MvcGrid
         /// </summary>
         public JsonReader SetId(string id)
         {
-            properties.Add(string.Format("id: '{0}'", id));
+            properties.Add("id", id);
             return this;
         }
 
@@ -102,21 +100,13 @@ namespace MvcGrid
         /// </summary>
         public JsonReader SetUserDataElementName(string userData)
         {
-            properties.Add(string.Format("userdata: '{0}'", userData));
-            return this;
-        }
-
-        public JsonReader SetSubGridInfo(JsonReaderSubGrid subGridInfo)
-        {
-            if (subGridInfo != null)
-                properties.Add(string.Format("subgrid: {{{0}}}", subGridInfo));
-            
+            properties.Add("userdata", userData);
             return this;
         }
 
         public override string ToString()
         {
-            return string.Join(", ", properties);
+            return string.Join(", ", properties.Select(x => PropertyResolver.Resolve(x)));
         }
     }
 }

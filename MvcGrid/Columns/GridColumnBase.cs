@@ -1,23 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using MvcGrid.Utilites;
 
 namespace MvcGrid
 {
     public abstract class GridColumnBase
     {
-        private Dictionary<string, object> properties = new Dictionary<string, object>();
-        protected Dictionary<string, object> Properties
-        {
-            get { return properties; }
-            set { properties = value; }
-        }
+        private Dictionary<string, object> _properties = new Dictionary<string, object>();
 
         /// <summary>
         /// Defines the alignment of the cell in the Body layer, not in header cell
         /// </summary>
         public GridColumnBase SetAlign(TextAlign align)
         {
-            Properties.Add("align", align.ToString().ToLower());
+            AddProperty("align", align.ToString().ToLower());
             return this;
         }
 
@@ -26,7 +22,7 @@ namespace MvcGrid
         /// </summary>
         public GridColumnBase SetFixed(bool isFixed)
         {
-            Properties.Add("fixed", isFixed);
+            AddProperty("fixed", isFixed);
             return this;
         }
 
@@ -35,7 +31,7 @@ namespace MvcGrid
         /// </summary>
         public GridColumnBase SetHidden(bool isHidden)
         {
-            Properties.Add("hidden", isHidden);
+            AddProperty("hidden", isHidden);
             return this;
         }
 
@@ -44,7 +40,7 @@ namespace MvcGrid
         /// </summary>
         public GridColumnBase SetLabel(string label)
         {
-            Properties.Add("label", label);
+            AddProperty("label", label);
             return this;
         }
 
@@ -53,7 +49,7 @@ namespace MvcGrid
         /// </summary>
         public GridColumnBase SetName(string name)
         {
-            Properties.Add("name", name);
+            AddProperty("name", name);
             return this;
         }
 
@@ -62,7 +58,7 @@ namespace MvcGrid
         /// </summary>
         public GridColumnBase SetResizable(bool isResizable)
         {
-            Properties.Add("resizable", isResizable);
+            AddProperty("resizable", isResizable);
             return this;
         }
 
@@ -71,7 +67,7 @@ namespace MvcGrid
         /// </summary>
         public GridColumnBase SetSearch(bool search)
         {
-            Properties.Add("search", search);
+            AddProperty("search", search);
             return this;
         }
 
@@ -80,28 +76,47 @@ namespace MvcGrid
         /// </summary>
         public GridColumnBase SetSortable(bool isSortable)
         {
-            Properties.Add("sortable", isSortable);
+            AddProperty("sortable", isSortable);
             return this;
         }
 
         /// <summary>
         /// If this option is false the title is not displayed in that column when we hover a cell with the mouse
         /// </summary>
-        public GridColumnBase SetTitle(string title)
+        public GridColumnBase ShowTitle(bool showTitle)
         {
-            Properties.Add("title", title);
+            AddProperty("title", showTitle);
             return this;
         }
 
         public GridColumnBase SetWidth(int width)
         {
-            Properties.Add("width", width);
+            AddProperty("width", width);
             return this;
         }
 
         public override string ToString()
         {
-            return string.Join(", ", Properties.Select(x=> (x.Value is string) ? string.Format("{0}: '{1}'", x.Key, x.Value) : string.Format("{0}: {1}", x.Key, x.Value.ToString().ToLower())));
+            return string.Join(", ", _properties.Select(x => PropertyResolver.Resolve(x)));
+        }
+
+        protected virtual void AddProperty(string propertyName, object value)
+        {
+            if (!_properties.ContainsKey(propertyName))
+                _properties.Add(propertyName, value);
+        }
+
+        protected object GetProperty(string name)
+        {
+            if (_properties.ContainsKey(name))
+                return _properties.First(x=> x.Key == name).Value;
+
+            return null;
+        }
+
+        protected Dictionary<string, object> GetProperties()
+        {
+            return _properties;
         }
     }
 }

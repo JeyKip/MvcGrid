@@ -60,6 +60,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Columns\FormatOption.cs" />
+    <Compile Include="Columns\GridImage.cs" />
     <Compile Include="Columns\GridImageButtonColumn.cs" />
     <Compile Include="Columns\GridFormatterColumn.cs" />
     <Compile Include="Columns\GridImageColumn.cs" />
@@ -72,11 +74,11 @@
     <Compile Include="FilterCondition.cs" />
     <Compile Include="GridSettings.cs" />
     <Compile Include="JsonReader.cs" />
-    <Compile Include="JsonReaderSubGrid.cs" />
     <Compile Include="MvcGrid.cs" />
     <Compile Include="Navigator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilites\ExpressionToStringConvertor.cs" />
+    <Compile Include="Utilites\PropertyResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MvcGrid.Test.Helpers
+﻿namespace MvcGrid.Test.Helpers
 {
     public class GridSettings4Test : GridSettings
     {
-        protected override string GridId
+        public override string GridId
         {
             get
             {
@@ -16,7 +10,7 @@ namespace MvcGrid.Test.Helpers
             }
         }
 
-        protected override string Pager
+        public override string Pager
         {
             get
             {

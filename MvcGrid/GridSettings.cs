@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
+using MvcGrid.Utilites;
 
 namespace MvcGrid
 {
     public class GridSettings
     {
-        private List<string> properties = new List<string>();
-        private List<GridColumnBase> columns = new List<GridColumnBase>();
-        private Navigator navigator = new Navigator();
+        private Dictionary<string, object> properties = new Dictionary<string, object>();
+        private Navigator _navigator = null;
+        private bool _showPager = false;
 
         /// <summary>
         /// The url of the file that returns the data needed to populate the grid
         /// </summary>
         public GridSettings SetUrl(string url)
         {
-            properties.Add(string.Format("url: '{0}'", url));
+            properties.Add("url", url);
             return this;
         }
 
@@ -25,7 +26,7 @@ namespace MvcGrid
         /// </summary>
         public GridSettings SetDataType(GridDataType dataType)
         {
-            properties.Add(string.Format("datatype: '{0}'", dataType));
+            properties.Add("datatype", dataType.ToString().ToLower());
             return this;
         }
 
@@ -34,7 +35,7 @@ namespace MvcGrid
         /// </summary>
         public GridSettings SetRowNumber(int rowNumber)
         {
-            properties.Add(string.Format("rowNum: {0}", rowNumber));
+            properties.Add("rowNum", rowNumber);
             return this;
         }
 
@@ -43,7 +44,7 @@ namespace MvcGrid
         /// </summary>
         public GridSettings SetRowList(params int[] rowList)
         {
-            properties.Add(string.Format("rowList: [{0}]", string.Join(", ", rowList)));
+            properties.Add("rowList", rowList);
             return this;
         }
 
@@ -52,7 +53,7 @@ namespace MvcGrid
         /// </summary>
         public GridSettings SetViewRecords(bool viewRecords)
         {
-            properties.Add(string.Format("viewrecords: {0}", viewRecords.ToString().ToLower()));
+            properties.Add("viewrecords", viewRecords);
             return this;
         }
 
@@ -61,7 +62,7 @@ namespace MvcGrid
         /// </summary>
         public GridSettings SetEmptyRecords(string emptyRecordsText)
         {
-            properties.Add(string.Format("emptyrecords: '{0}'", emptyRecordsText));
+            properties.Add("emptyrecords", emptyRecordsText);
             return this;
         }
 
@@ -70,7 +71,7 @@ namespace MvcGrid
         /// </summary>
         public GridSettings SetSortName(string sortName)
         {
-            properties.Add(string.Format("sortname: '{0}'", sortName));
+            properties.Add("sortname", sortName);
             return this;
         }
 
@@ -79,7 +80,7 @@ namespace MvcGrid
         /// </summary>
         public GridSettings SetSortOrder(SortOrder sortOrder)
         {
-            properties.Add(string.Format("sortorder: '{0}'", sortOrder.ToString().ToLower()));
+            properties.Add("sortorder", sortOrder.ToString().ToLower());
             return this;
         }
 
@@ -88,7 +89,7 @@ namespace MvcGrid
         /// </summary>
         public GridSettings SetCaption(string caption)
         {
-            properties.Add(string.Format("caption: '{0}'", caption));
+            properties.Add("caption", caption);
             return this;
         }
 
@@ -97,7 +98,7 @@ namespace MvcGrid
         /// </summary>
         public GridSettings SetHideGrid(bool hideGrid)
         {
-            properties.Add(string.Format("hidegrid: {0}", hideGrid.ToString().ToLower()));
+            properties.Add("hidegrid", hideGrid);
             return this;
         }
 
@@ -106,7 +107,13 @@ namespace MvcGrid
         /// </summary>
         public GridSettings SetHeight(string height)
         {
-            properties.Add(string.Format("height: '{0}'", height));
+            properties.Add("height", height);
+            return this;
+        }
+
+        public GridSettings AddJsonReader(JsonReader jsonReader)
+        {
+            properties.Add("jsonReader", jsonReader);
             return this;
         }
 
@@ -115,21 +122,22 @@ namespace MvcGrid
         /// </summary>
         public GridSettings AddColumn(GridColumnBase column)
         {
-            columns.Add(column);
+            if (!properties.ContainsKey("colModel"))
+                properties.Add("colModel", new List<GridColumnBase>());
+            var colModel = properties.FirstOrDefault(x => x.Key == "colModel").Value as List<GridColumnBase>;
+            colModel.Add(column);
             return this;
         }
 
-        public GridSettings AddNavigator(Navigator _navigator)
+        public GridSettings SetNavigator(Navigator navigator)
         {
-            navigator = _navigator;
+            _navigator = navigator;
             return this;
         }
 
-        public GridSettings AddJsonReader(JsonReader jsonReader)
+        public GridSettings ShowPager(bool showPager)
         {
-            if (jsonReader != null)
-                properties.Add(string.Format("jsonReader: {{{0}}}", jsonReader));
-
+            _showPager = showPager;
             return this;
         }
 
@@ -139,39 +147,44 @@ namespace MvcGrid
             {
                 return
 @"<table id=""@gridId""></table>
-<div id=""@navigatorId""></div>
+@PagerDiv
 <script type=""text/javascript"">
     $(function(){
         $('#@gridId').jqGrid({
-            @Properties,
-            colModel: [@ColModel],
-            pager: '#@navigatorId'
+            @Properties
         });
-        $('#@gridId').navGrid('#@navigatorId', {
-            @Navigator
-        });
+        @NavigatorSettings
     });
-@CustomFormatters
+    @CustomFormatters
 </script>";
             }
         }
 
         public override string ToString()
         {
-            return GridSettingsPattern
+            if (_showPager && !properties.ContainsKey("pager"))
+                properties.Add("pager", string.Format("#{0}", Pager));
+
+            string grid = GridSettingsPattern.Replace("@PagerDiv", _showPager ? string.Format("<div id=\"{0}\"></div>", Pager) : string.Empty)
+                                             .Replace("@NavigatorSettings", (_showPager && !string.IsNullOrWhiteSpace(string.Format("{0}", _navigator))) ? string.Format(@"$('#{0}').navGrid('#{1}', {{{2}}});", GridId, Pager, _navigator) : string.Empty);
+
+            string propertiesFormat = properties.Count > 0 ? string.Join(",\n", properties.Select(x=> PropertyResolver.Resolve(x))) : string.Empty;
+            string formatters = properties.ContainsKey("colModel") ? 
+                                string.Join("\n", (properties.FirstOrDefault(x=> x.Key == "colModel").Value as List<GridColumnBase>)
+                                      .Where(x => x is ICustomFormatterColumn)
+                                      .Select(x => (x as ICustomFormatterColumn).GetFormatter())) 
+                                      : string.Empty;
+            return grid
                 .Replace("@gridId", GridId)
-                .Replace("@navigatorId", Pager)
-                .Replace("@ColModel", string.Join(", ", columns.Select(x => string.Format("{{{0}}}", x.ToString()))))
-                .Replace("@Navigator", navigator == null ? string.Empty : navigator.ToString())
-                .Replace("@Properties", string.Join(",\n", properties))
-                .Replace("@CustomFormatters", string.Join("\n",
-                columns.Where(x => x is ICustomFormatterColumn)
-                       .Select(x => (x as ICustomFormatterColumn).GetFormatter())));
+                .Replace("@Properties", propertiesFormat)
+                .Replace("@CustomFormatters", formatters);
         }
 
-        #region Protected Members
+        #region Public Members
         private string _gridId = string.Empty;
-        protected virtual string GridId
+
+        [ExcludeFromCodeCoverage]
+        public virtual string GridId
         {
             get
             {
@@ -181,7 +194,8 @@ namespace MvcGrid
             }
         }
 
-        protected virtual string Pager
+        [ExcludeFromCodeCoverage]
+        public virtual string Pager
         {
             get
             {
