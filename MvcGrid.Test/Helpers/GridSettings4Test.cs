@@ -10,7 +10,7 @@
             }
         }
 
-        public override string Pager
+        public override string PagerId
         {
             get
             {

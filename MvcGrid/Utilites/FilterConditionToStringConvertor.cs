@@ -8,13 +8,23 @@ namespace MvcGrid.Utilites
     {
         public static string Convert(Expression<Func<FilterCondition, bool>> expression)
         {
+            return ConvertLambdaExpressionToJavaScript(((LambdaExpression)expression));
+        }
+
+        public static string Convert(Expression<Func<FilterCondition, string>> expression)
+        {
+            return ConvertLambdaExpressionToJavaScript(((LambdaExpression)expression));
+        }
+
+        private static string ConvertLambdaExpressionToJavaScript(LambdaExpression expression)
+        {
             string expBody = ((LambdaExpression)expression).Body.ToString();
             foreach (var parameter in expression.Parameters)
                 expBody = expBody.Replace(string.Format("{0}.", parameter.Name), string.Empty);
 
             Regex regex = new Regex(@"get_Item(\(""\w*""\))");
             var matches = regex.Matches(expBody);
-            foreach(Match match in matches)
+            foreach (Match match in matches)
             {
                 if (expBody.IndexOf(match.Value) < 0)
                     continue;
@@ -24,7 +34,7 @@ namespace MvcGrid.Utilites
             }
 
             return expBody.Replace("AndAlso", "&&")
-                          .Replace("OrElse", "||");
+                          .Replace("OrElse", "||"); 
         }
     }
 }

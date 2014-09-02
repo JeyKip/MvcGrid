@@ -10,7 +10,7 @@ namespace MvcGrid.Test.Columns
         [ExpectedException(ExpectedException=typeof(ArgumentException), ExpectedMessage="Option with name [key] already exists")]
         public void AddOption_AddingDuplicateOption_ArgumentException()
         {
-            FormatOption options = new FormatOption();
+            Option options = new Option();
             options.AddOption("key", 1);
             options.AddOption("key", 2);
         }
@@ -18,7 +18,7 @@ namespace MvcGrid.Test.Columns
         [Test]
         public void ToString_FewOptions_KeyValuePairsInString()
         {
-            FormatOption options = new FormatOption();
+            Option options = new Option();
             options.AddOption("baseLinkUrl", "home/getdata");
             options.AddOption("id", 5);
 

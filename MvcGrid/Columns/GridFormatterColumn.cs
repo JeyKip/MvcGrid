@@ -17,10 +17,10 @@ namespace MvcGrid
             if (string.IsNullOrWhiteSpace(optionName))
                 throw new ArgumentException("Option name cannot be null or empty!");
 
-            FormatOption formatoption = GetProperty("formatoptions") as FormatOption;
+            Option formatoption = GetProperty("formatoptions") as Option;
             if (formatoption == null)
             {
-                formatoption = new FormatOption();
+                formatoption = new Option();
                 AddProperty("formatoptions", formatoption);
             }
 

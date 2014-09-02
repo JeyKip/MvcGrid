@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace MvcGrid
 {
-    public class FormatOption
+    public class Option
     {
         private Dictionary<string, object> options = new Dictionary<string, object>();
 

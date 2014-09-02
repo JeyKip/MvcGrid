@@ -129,12 +129,12 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Data\DataReferenceReader.cs" />
+    <Compile Include="Data\CorporationDataAccessor.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\DataReference.cs" />
-    <Compile Include="Models\DataReferenceValue.cs" />
+    <Compile Include="Models\Corporation.cs" />
+    <Compile Include="Models\Creator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -142,6 +142,13 @@
     <Content Include="Content\images\b_grey_16.png" />
     <Content Include="Content\images\b_red_16.png" />
     <Content Include="Content\images\b_yellow_16.png" />
+    <Content Include="Content\images\logos\apple.jpg" />
+    <Content Include="Content\images\logos\microsoft.jpg" />
+    <Content Include="Content\images\photo\bill_geits.jpg" />
+    <Content Include="Content\images\photo\pol_allen.jpg" />
+    <Content Include="Content\images\photo\steve_balmer.jpg" />
+    <Content Include="Content\images\photo\steve_jobs.jpg" />
+    <Content Include="Content\images\photo\steve_voznyak.jpg" />
     <Content Include="Content\jquery.jqGrid\ellipsis-xbl.xml" />
     <Content Include="Content\jquery.jqGrid\ui.jqgrid.css" />
     <Content Include="Content\themes\base\images\animated-overlay.gif" />

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace MvcGrid.Test.Columns
 {
@@ -22,55 +17,37 @@ namespace MvcGrid.Test.Columns
         }
 
         [Test]
-        [ExpectedException(ExpectedException = typeof(InvalidOperationException), ExpectedMessage = "Column name is missing")]
-        public void GetFormatter_WithoutName_ThrowInvalidOperationException()
+        public void ToString_ImageWithoutCondition()
         {
             GridImageColumn ic = new GridImageColumn();
-            ic.AddImage(new GridImage());
-            string formatter = ic.GetFormatter();
+            ic.AddImage(new GridImage().SetImagePath("/images/red.png"));
+
+            string expected =
+@"formatter: function (cv,o,ro){
+    return ""<img src='/images/red.png' />"";
+    return """";
+}".RemoveSpaces();
+            string actual = ic.ToString().RemoveSpaces();
+
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
-        [ExpectedException(ExpectedException = typeof(InvalidOperationException), ExpectedMessage = "Column name is missing")]
-        public void GetFormatter_WithEmptyName_ThrowInvalidOperationException()
+        public void ToString_AllConditionsAreMet_FormatterPropertyCorrectFunctionText()
         {
             GridImageColumn ic = new GridImageColumn();
-            ic.SetName("");
-            ic.AddImage(new GridImage());
-            string formatter = ic.GetFormatter();
-        }
-
-        [Test]
-        public void GetFormatter_AllConditionsAreMet_CorrectFormatterFunctionText()
-        {
-            GridImageColumn ic = new GridImageColumn();
-            ic.SetName("Status");
             ic.AddImage((new GridImage()).SetImagePath("/images/red.png").SetToolTip("Blocked").DisplayWhen(x => x["Status"] == "0"));
             ic.AddImage((new GridImage()).SetImagePath("/images/green.png").SetToolTip("Active").DisplayWhen(x => x["Status"] == "1"));
 
             string expected =
-@"function Statusformatter(cv,o,ro){
+@"formatter: function (cv,o,ro){
     if ((ro[""Status""] == ""0""))
         return ""<img src='/images/red.png' title='Blocked' />"";
     if ((ro[""Status""] == ""1""))
         return ""<img src='/images/green.png' title='Active' />"";
     return """";
 }".RemoveSpaces();
-            string actual = ic.GetFormatter().RemoveSpaces();
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void ToString_AllConditionsAreMet_CorrectFormatterFunctionName()
-        {
-            GridImageColumn ic = new GridImageColumn();
-            ic.SetName("Status");
-            ic.AddImage((new GridImage()).SetImagePath("/images/red.png").SetToolTip("Blocked").DisplayWhen(x => x["Status"] == "0"));
-            ic.AddImage((new GridImage()).SetImagePath("/images/green.png").SetToolTip("Active").DisplayWhen(x => x["Status"] == "1"));
-
-            string expected = "name: 'Status', formatter: Statusformatter";
-            string actual = ic.ToString();
+            string actual = ic.ToString().RemoveSpaces();
 
             Assert.AreEqual(expected, actual);
         }

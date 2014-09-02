@@ -95,9 +95,16 @@ namespace MvcGrid
             return this;
         }
 
+        public GridColumnBase WrapText(bool wrapText)
+        {
+            if (wrapText)
+                AddProperty("wrappingTextFunction", "cellattr: function (rowId, tv, rawObject, cm, rdata) { return 'style=\"white-space: normal;\"' }");
+            return this;
+        }
+
         public override string ToString()
         {
-            return string.Join(", ", _properties.Select(x => PropertyResolver.Resolve(x)));
+            return string.Join(", ", _properties.Select(x => ResolveProperty(x)));
         }
 
         protected virtual void AddProperty(string propertyName, object value)
@@ -109,14 +116,17 @@ namespace MvcGrid
         protected object GetProperty(string name)
         {
             if (_properties.ContainsKey(name))
-                return _properties.First(x=> x.Key == name).Value;
+                return _properties.First(x => x.Key == name).Value;
 
             return null;
         }
 
-        protected Dictionary<string, object> GetProperties()
+        protected virtual string ResolveProperty(KeyValuePair<string, object> x)
         {
-            return _properties;
+            if (x.Key == "wrappingTextFunction")
+                return x.Value.ToString();
+
+            return PropertyResolver.Resolve(x);
         }
     }
 }

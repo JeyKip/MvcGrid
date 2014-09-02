@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace MvcGrid.Test.Columns
 {
@@ -15,35 +10,47 @@ namespace MvcGrid.Test.Columns
         {
             GridImage gi = new GridImage();
 
-            string expected = @"return ""<img src='' title='' />"";";
+            string expected = "<img />";
             string actual = gi.ToString();
 
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
-        public void ToString_WithPropertiesWithoutCondition_ImageTagWithFilledAttributes()
+        public void ToString_SetLambdaImagePath()
         {
             GridImage gi = new GridImage();
-            gi.SetImagePath("/images/image.gif");
-            gi.SetToolTip("Image tooltip");
+            gi.SetImagePath(x => x["ImageUrl"]);
 
-            string expected = @"return ""<img src='/images/image.gif' title='Image tooltip' />"";";
+            string expected = @"<img src='""+ro[""ImageUrl""]+""' />";
             string actual = gi.ToString();
 
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
-        public void ToString_WithPropertiesAndCondition_ImageTagWithFilledAttributesAndIfStatement()
+        public void ToString_SetLambdaToolTip()
         {
             GridImage gi = new GridImage();
-            gi.DisplayWhen(x => x["Status"] == "1")
-              .SetImagePath("/images/image.gif")
-              .SetToolTip("Image tooltip");
+            gi.SetToolTip(x => x["Description"]);
 
-            string expected = @"if ((ro[""Status""] == ""1"")) return ""<img src='/images/image.gif' title='Image tooltip' />"";".RemoveSpaces();
-            string actual = gi.ToString().RemoveSpaces();
+            string expected = @"<img title='""+ro[""Description""]+""' />";
+            string actual = gi.ToString();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void ToString_AllProperties_CorrectImageTag()
+        {
+            GridImage gi = new GridImage();
+            gi.SetImagePath("/images/red.png");
+            gi.SetToolTip("InActive");
+            gi.SetWidth(16);
+            gi.SetHeight(16);
+
+            string expected = "<img src='/images/red.png' title='InActive' width='16' height='16' />";
+            string actual = gi.ToString();
 
             Assert.AreEqual(expected, actual);
         }

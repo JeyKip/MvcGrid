@@ -141,21 +141,23 @@ namespace MvcGrid
             return this;
         }
 
+        public GridSettings SetSubGrid(SubGridSettings sg)
+        {
+            properties.Add("subGridProperty", sg);
+            return this;
+        }
+
         protected string GridSettingsPattern
         {
             get
             {
                 return
-@"<table id=""@gridId""></table>
+@"@GridTable
 @PagerDiv
 <script type=""text/javascript"">
     $(function(){
-        $('#@gridId').jqGrid({
-            @Properties
-        });
-        @NavigatorSettings
+        @InitFunction
     });
-    @CustomFormatters
 </script>";
             }
         }
@@ -163,22 +165,56 @@ namespace MvcGrid
         public override string ToString()
         {
             if (_showPager && !properties.ContainsKey("pager"))
-                properties.Add("pager", string.Format("#{0}", Pager));
+                properties.Add("pager", string.Format("#{0}", PagerId));
 
-            string grid = GridSettingsPattern.Replace("@PagerDiv", _showPager ? string.Format("<div id=\"{0}\"></div>", Pager) : string.Empty)
-                                             .Replace("@NavigatorSettings", (_showPager && !string.IsNullOrWhiteSpace(string.Format("{0}", _navigator))) ? string.Format(@"$('#{0}').navGrid('#{1}', {{{2}}});", GridId, Pager, _navigator) : string.Empty);
+            return GridSettingsPattern.Replace("@GridTable", GetGridTable())
+                                      .Replace("@PagerDiv", GetPager())
+                                      .Replace("@InitFunction", GetInitFunction());
 
-            string propertiesFormat = properties.Count > 0 ? string.Join(",\n", properties.Select(x=> PropertyResolver.Resolve(x))) : string.Empty;
-            string formatters = properties.ContainsKey("colModel") ? 
-                                string.Join("\n", (properties.FirstOrDefault(x=> x.Key == "colModel").Value as List<GridColumnBase>)
-                                      .Where(x => x is ICustomFormatterColumn)
-                                      .Select(x => (x as ICustomFormatterColumn).GetFormatter())) 
-                                      : string.Empty;
-            return grid
-                .Replace("@gridId", GridId)
-                .Replace("@Properties", propertiesFormat)
-                .Replace("@CustomFormatters", formatters);
         }
+
+        #region Protected
+        protected string GetGridTable()
+        {
+            return string.Format(@"<table id='{0}'></table>", GridId);
+        }
+
+        protected string GetPager()
+        {
+            if (_showPager)
+                return string.Format("<div id='{0}'></div>", PagerId);
+            return string.Empty;
+        }
+
+        protected string GetInitFunction()
+        {
+            string function =
+@"$(""#@gridId"").jqGrid({
+        @Properties
+    });
+@NavigatorSettings";
+
+            string navigatorFormat = string.Empty;
+            if (_showPager && _navigator != null && !string.IsNullOrWhiteSpace(_navigator.ToString()))
+                navigatorFormat = string.Format(@"$('#{0}').navGrid('#{1}', {{{2}}});", GridId, PagerId, _navigator);
+
+            string propertiesFormat = string.Empty;
+            if (properties.Count > 0)
+                propertiesFormat = string.Join(",\n", properties.Select(x => ResolveParameter(x)));
+
+            return function.Replace("@NavigatorSettings", navigatorFormat)
+                           .Replace("@Properties", propertiesFormat)
+                           .Replace("@gridId", GridId);
+        }
+
+        protected virtual string ResolveParameter(KeyValuePair<string, object> x)
+        {
+            if (x.Key == "subGridProperty")
+                return x.Value.ToString();
+
+            return PropertyResolver.Resolve(x);
+        }
+        #endregion
 
         #region Public Members
         private string _gridId = string.Empty;
@@ -195,7 +231,7 @@ namespace MvcGrid
         }
 
         [ExcludeFromCodeCoverage]
-        public virtual string Pager
+        public virtual string PagerId
         {
             get
             {

@@ -23,5 +23,14 @@ namespace MvcGrid.Test.Utilites
 
             Assert.AreEqual(expected, actual);
         }
+
+        [Test]
+        public void Convert_FilterConditionString_CorrectJavaScriptObject()
+        {
+            string expected = @"ro[""ImageUrl""]";
+            string actual = FilterConditionToStringConvertor.Convert(x => x["ImageUrl"]);
+
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

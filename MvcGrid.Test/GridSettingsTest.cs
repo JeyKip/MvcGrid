@@ -12,10 +12,10 @@ namespace MvcGrid.Test
             GridSettings4Test grid = new GridSettings4Test();
             
             string expected = string.Format(
-@"<table id=""{0}""></table>
+@"<table id='{0}'></table>
 <script type=""text/javascript"">
     $(function(){{
-        $('#{0}').jqGrid({{
+        $(""#{0}"").jqGrid({{
         }});
     }});
 </script>", grid.GridId).RemoveSpaces();
@@ -25,7 +25,7 @@ namespace MvcGrid.Test
         }
 
         [Test]
-        public void GridSettings_SimpleProperties()
+        public void GridSettings_AllProperties_CorrectGridMarkup()
         {
             GridSettings4Test grid = new GridSettings4Test();
             JsonReader reader = new JsonReader();
@@ -54,10 +54,10 @@ namespace MvcGrid.Test
                 .AddColumn(imageColumn);
 
             string expected = string.Format(
-@"<table id=""{0}""></table>
+@"<table id='{0}'></table>
 <script type=""text/javascript"">
     $(function(){{
-        $('#{0}').jqGrid({{
+        $(""#{0}"").jqGrid({{
             url: '/Home/GetData',
             datatype: 'jsonstring',
             rowNum: 25,
@@ -78,8 +78,7 @@ namespace MvcGrid.Test
             ]
         }});
     }});
-    {4}
-</script>", grid.GridId, reader, formatterColumn, imageColumn, imageColumn.GetFormatter()).RemoveSpaces();
+</script>", grid.GridId, reader, formatterColumn, imageColumn).RemoveSpaces();
             string actual = grid.ToString().RemoveSpaces();
 
             Assert.AreEqual(expected, actual);
@@ -92,15 +91,15 @@ namespace MvcGrid.Test
             grid.ShowPager(true);
 
             string expected = string.Format(
-@"<table id=""{0}""></table>
-<div id=""{1}""></div>
+@"<table id='{0}'></table>
+<div id='{1}'></div>
 <script type=""text/javascript"">
     $(function(){{
-        $('#{0}').jqGrid({{
+        $(""#{0}"").jqGrid({{
             pager: '#{1}'
         }});
     }});
-</script>", grid.GridId, grid.Pager).RemoveSpaces();
+</script>", grid.GridId, grid.PagerId).RemoveSpaces();
             string actual = grid.ToString().RemoveSpaces();
 
             Assert.AreEqual(expected, actual);
@@ -113,10 +112,10 @@ namespace MvcGrid.Test
             grid.SetNavigator(new Navigator());
             
             string expected = string.Format(
-@"<table id=""{0}""></table>
+@"<table id='{0}'></table>
 <script type=""text/javascript"">
     $(function(){{
-        $('#Grid').jqGrid({{}});
+        $(""#Grid"").jqGrid({{}});
     }});
 </script>", grid.GridId).RemoveSpaces();
             string actual = grid.ToString().RemoveSpaces();
@@ -132,15 +131,15 @@ namespace MvcGrid.Test
             grid.SetNavigator(new Navigator());
 
             string expected = string.Format(
-@"<table id=""{0}""></table>
-<div id=""{1}""></div>
+@"<table id='{0}'></table>
+<div id='{1}'></div>
 <script type=""text/javascript"">
     $(function(){{
-        $('#Grid').jqGrid({{
+        $(""#Grid"").jqGrid({{
             pager: '#{1}'
         }});
     }});
-</script>", grid.GridId, grid.Pager).RemoveSpaces();
+</script>", grid.GridId, grid.PagerId).RemoveSpaces();
             string actual = grid.ToString().RemoveSpaces();
 
             Assert.AreEqual(expected, actual);
@@ -159,11 +158,11 @@ namespace MvcGrid.Test
                             .SetSearchButtonVisibility(true));
 
             string expected = string.Format(
-@"<table id=""{0}""></table>
-<div id=""{1}""></div>
+@"<table id='{0}'></table>
+<div id='{1}'></div>
 <script type=""text/javascript"">
     $(function(){{
-        $('#Grid').jqGrid({{
+        $(""#Grid"").jqGrid({{
             pager: '#{1}'
         }});
         $('#{0}').navGrid('#{1}', {{
@@ -174,7 +173,7 @@ namespace MvcGrid.Test
             search: true
         }});
     }});
-</script>", grid.GridId, grid.Pager).RemoveSpaces();
+</script>", grid.GridId, grid.PagerId).RemoveSpaces();
             string actual = grid.ToString().RemoveSpaces();
 
             Assert.AreEqual(expected, actual);

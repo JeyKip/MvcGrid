@@ -23,15 +23,11 @@ namespace MvcGrid
             if (images.Count <= 0)
                 return string.Empty;
 
-            var name = GetProperty("name");
-            if (name == null || string.IsNullOrWhiteSpace(name.ToString()))
-                throw new InvalidOperationException("Column name is missing");
-
             return string.Format(
-@"function {0}formatter(cv,o,ro){{
-    {1}
+@"function (cv,o,ro){{
+    {0}
     return """";
-}}", name, string.Join("\n", images));
+}}", string.Join("\n", images.Select(x => string.Format("{0}return \"{1}\";", string.IsNullOrWhiteSpace(x.GetDisplayCondition()) ? string.Empty : string.Format("if ({0})", x.GetDisplayCondition()), x))));
         }
 
         public override string ToString()
@@ -39,10 +35,18 @@ namespace MvcGrid
             if (GetProperty("formatter") == null)
             {
                 if (!string.IsNullOrWhiteSpace(GetFormatter()))
-                    AddProperty("formatter", string.Format("{0}formatter", GetProperty("name")));
+                    AddProperty("formatter", GetFormatter());
             }
 
-            return string.Join(", ", GetProperties().Select(x => (x.Key == "formatter") ? string.Format("{0}: {1}", x.Key, x.Value) : PropertyResolver.Resolve(x)));
+            return base.ToString();
+        }
+
+        protected override string ResolveProperty(KeyValuePair<string, object> x)
+        {
+            if (x.Key == "formatter")
+                return string.Format("{0}: {1}", x.Key, x.Value);
+
+            return base.ResolveProperty(x);
         }
     }
 }

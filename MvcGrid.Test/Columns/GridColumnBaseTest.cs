@@ -18,11 +18,13 @@ namespace MvcGrid.Test.Columns
                   .SetSearch(true)
                   .SetSortable(true)
                   .ShowTitle(false)
-                  .SetWidth(200);
+                  .SetWidth(200)
+                  .WrapText(true);
 
             string expected = @"align: 'center', fixed: true, hidden: false,
                                 label: 'Test column', name: 'Test', resizable: true,
-                                search: true, sortable: true, title: false, width: 200"
+                                search: true, sortable: true, title: false, width: 200,
+                                cellattr: function (rowId, tv, rawObject, cm, rdata) { return 'style=""white-space: normal;""' }"
                 .RemoveSpaces();
             string actual = column.ToString().RemoveSpaces();
 

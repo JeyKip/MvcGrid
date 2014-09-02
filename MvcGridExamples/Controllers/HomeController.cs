@@ -1,9 +1,7 @@
-﻿using MvcGrid.DataFormat;
-using System;
-using System.Collections.Generic;
-using System.Web.Mvc;
-using MvcGridExamples.Models;
+﻿using System.Web.Mvc;
+using MvcGrid.DataFormat;
 using MvcGridExamples.Data;
+using System.Linq;
 
 namespace MvcGridExamples.Controllers
 {
@@ -14,23 +12,28 @@ namespace MvcGridExamples.Controllers
             return View();
         }
 
-        public JsonResult GetData()
+        public JsonResult GetCorporationList()
         {
-            JsonData data = new JsonData()
+            var cl = CorporationDataAccessor.GetCorporations();
+            JsonData data = new JsonData() 
             {
-                TotalPages = 1,
+                Rows = cl,
+                Records = cl.Count,
                 CurrentPage = 1,
-                Records = 2,
-                Rows = DataReferenceReader.GetDataReferenceList()
+                TotalPages = 1
             };
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult GetDataReferenceValues(int id)
+        public JsonResult GetCreators(int id)
         {
+            var creators = CorporationDataAccessor.GetCorporations().FirstOrDefault(x => x.Id == id).Creators;
             JsonData data = new JsonData() 
             {
-                Rows = DataReferenceReader.GetValues(id)
+                Rows = creators,
+                Records = creators.Count,
+                CurrentPage = 1,
+                TotalPages = 1
             };
             return Json(data, JsonRequestBehavior.AllowGet);
         }
