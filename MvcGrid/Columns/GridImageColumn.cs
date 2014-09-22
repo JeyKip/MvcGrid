@@ -8,14 +8,14 @@ using MvcGrid.Utilites;
 
 namespace MvcGrid
 {
-    public class GridImageColumn : GridColumnBase, ICustomFormatterColumn
+    public class GridImageColumn : GridColumnBase<GridImageColumn>, ICustomFormatterColumn
     {
         List<GridImage> images = new List<GridImage>();
 
         public GridImageColumn AddImage(GridImage image)
         {
             images.Add(image);
-            return this;
+            return GetInstance();
         }
 
         public string GetFormatter()
@@ -47,6 +47,11 @@ namespace MvcGrid
                 return string.Format("{0}: {1}", x.Key, x.Value);
 
             return base.ResolveProperty(x);
+        }
+
+        protected override GridImageColumn GetInstance()
+        {
+            return this;
         }
     }
 }

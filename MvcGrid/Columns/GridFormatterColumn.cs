@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace MvcGrid
 {
-    public class GridFormatterColumn : GridColumnBase
+    public class GridFormatterColumn : GridColumnBase<GridFormatterColumn>
     {
         public GridFormatterColumn SetFormatter(string formatter)
         {
             AddProperty("formatter", formatter);
-            return this;
+            return GetInstance();
         }
 
         public GridFormatterColumn AddFormatOption(string optionName, object value)
@@ -25,12 +25,17 @@ namespace MvcGrid
             }
 
             formatoption.AddOption(optionName, value);
-            return this;
+            return GetInstance();
         }
 
         public override string ToString()
         {
             return base.ToString();
+        }
+
+        protected override GridFormatterColumn GetInstance()
+        {
+            return this;
         }
     }
 }

@@ -3,7 +3,7 @@
 namespace MvcGrid.Test.Columns
 {
     public class GridColumnBaseTest<T>
-        where T : GridColumnBase, new()
+        where T: GridColumnBase<T>, new()
     {
         [Test]
         public void GridColumn_BaseSettings()

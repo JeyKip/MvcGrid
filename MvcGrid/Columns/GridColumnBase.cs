@@ -4,129 +4,111 @@ using MvcGrid.Utilites;
 
 namespace MvcGrid
 {
-    public abstract class GridColumnBase
+    public abstract class GridColumnBase<T> : GridColumn
+        where T : class, new()
     {
-        private Dictionary<string, object> _properties = new Dictionary<string, object>();
-
         /// <summary>
         /// Defines the alignment of the cell in the Body layer, not in header cell
         /// </summary>
-        public GridColumnBase SetAlign(TextAlign align)
+        public T SetAlign(TextAlign align)
         {
             AddProperty("align", align.ToString().ToLower());
-            return this;
+            return GetInstance();
         }
 
         /// <summary>
         /// If set to true this option does not allow recalculation of the width of the column if shrinkToFit option is set to true. Also the width does not change if a setGridWidth method is used to change the grid width.
         /// </summary>
-        public GridColumnBase SetFixed(bool isFixed)
+        public T SetFixed(bool isFixed)
         {
             AddProperty("fixed", isFixed);
-            return this;
+            return GetInstance();
         }
 
         /// <summary>
         /// Defines if this column is hidden at initialization
         /// </summary>
-        public GridColumnBase SetHidden(bool isHidden)
+        public T SetHidden(bool isHidden)
         {
             AddProperty("hidden", isHidden);
-            return this;
+            return GetInstance();
         }
 
         /// <summary>
         /// Defines the heading for this column
         /// </summary>
-        public GridColumnBase SetLabel(string label)
+        public T SetLabel(string label)
         {
             AddProperty("label", label);
-            return this;
+            return GetInstance();
         }
 
         /// <summary>
         /// Set the unique name in the grid for the column. This property is required. As well as other words used as property/event names, the reserved words (which cannot be used for names) include subgrid, cb and rn.
         /// </summary>
-        public GridColumnBase SetName(string name)
+        public T SetName(string name)
         {
             AddProperty("name", name);
-            return this;
+            return GetInstance();
         }
 
         /// <summary>
         /// Defines if the column can be resized
         /// </summary>
-        public GridColumnBase SetResizable(bool isResizable)
+        public T SetResizable(bool isResizable)
         {
             AddProperty("resizable", isResizable);
-            return this;
+            return GetInstance();
         }
 
         /// <summary>
         /// When used in search modules, disables or enables searching on that column
         /// </summary>
-        public GridColumnBase SetSearch(bool search)
+        public T SetSearch(bool search)
         {
             AddProperty("search", search);
-            return this;
+            return GetInstance();
         }
 
         /// <summary>
         /// Defines is this can be sorted
         /// </summary>
-        public GridColumnBase SetSortable(bool isSortable)
+        public T SetSortable(bool isSortable)
         {
             AddProperty("sortable", isSortable);
-            return this;
+            return GetInstance();
         }
 
         /// <summary>
         /// If this option is false the title is not displayed in that column when we hover a cell with the mouse
         /// </summary>
-        public GridColumnBase ShowTitle(bool showTitle)
+        public T ShowTitle(bool showTitle)
         {
             AddProperty("title", showTitle);
-            return this;
+            return GetInstance();
         }
 
-        public GridColumnBase SetWidth(int width)
+        public T SetWidth(int width)
         {
             AddProperty("width", width);
-            return this;
+            return GetInstance();
         }
 
-        public GridColumnBase WrapText(bool wrapText)
+        public T WrapText(bool wrapText)
         {
             if (wrapText)
                 AddProperty("wrappingTextFunction", "cellattr: function (rowId, tv, rawObject, cm, rdata) { return 'style=\"white-space: normal;\"' }");
-            return this;
+            return GetInstance();
         }
 
-        public override string ToString()
-        {
-            return string.Join(", ", _properties.Select(x => ResolveProperty(x)));
-        }
-
-        protected virtual void AddProperty(string propertyName, object value)
-        {
-            if (!_properties.ContainsKey(propertyName))
-                _properties.Add(propertyName, value);
-        }
-
-        protected object GetProperty(string name)
-        {
-            if (_properties.ContainsKey(name))
-                return _properties.First(x => x.Key == name).Value;
-
-            return null;
-        }
-
-        protected virtual string ResolveProperty(KeyValuePair<string, object> x)
+        protected override string ResolveProperty(KeyValuePair<string, object> x)
         {
             if (x.Key == "wrappingTextFunction")
                 return x.Value.ToString();
 
             return PropertyResolver.Resolve(x);
         }
+
+        protected abstract T GetInstance();
     }
 }

@@ -60,6 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Columns\GridColumn.cs" />
     <Compile Include="Option.cs" />
     <Compile Include="Columns\GridImage.cs" />
     <Compile Include="Columns\GridImageButtonColumn.cs" />

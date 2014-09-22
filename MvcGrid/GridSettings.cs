@@ -120,11 +120,11 @@ namespace MvcGrid
         /// <summary>
         /// Add new column information
         /// </summary>
-        public GridSettings AddColumn(GridColumnBase column)
+        public GridSettings AddColumn(GridColumn column)
         {
             if (!properties.ContainsKey("colModel"))
-                properties.Add("colModel", new List<GridColumnBase>());
-            var colModel = properties.FirstOrDefault(x => x.Key == "colModel").Value as List<GridColumnBase>;
+                properties.Add("colModel", new List<GridColumn>());
+            var colModel = properties.FirstOrDefault(x => x.Key == "colModel").Value as List<GridColumn>;
             colModel.Add(column);
             return this;
         }
