@@ -65,6 +65,7 @@
     <Compile Include="Columns\FormatOptionTest.cs" />
     <Compile Include="Columns\GridColumnBaseTest.cs" />
     <Compile Include="Columns\GridFormatterColumnTest.cs" />
+    <Compile Include="Columns\GridImageButtonColumnTest.cs" />
     <Compile Include="Columns\GridImageColumnTest.cs" />
     <Compile Include="Columns\GridImageTest.cs" />
     <Compile Include="GridSettingsTest.cs" />

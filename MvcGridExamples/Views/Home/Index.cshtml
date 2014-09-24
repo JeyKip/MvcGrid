@@ -11,13 +11,19 @@
     @Scripts.Render("~/bundles/jqueryui")
     <script type="text/javascript" src="~/Scripts/i18n/grid.locale-en.js"></script>
     <script type="text/javascript" src="~/Scripts/jquery.jqGrid.js"></script>
-        @{
+    <script type="text/javascript">
+        function editPerson(sender, id, name) {
+            alert(id + ' ' + name);
+        }
+    </script>
+    @{
         var sg = new SubGridSettings();
         sg.SetSubgridUrl("Home/GetCreators", "Id");
         sg.SetDataType(GridDataType.Json);
         sg.SetHeight("100%");
         sg.SetCaption("Основатели");
         sg.SetHideGrid(false);
+        sg.AddColumn(new GridImageButtonColumn().SetLabel(" ").SetName("ID").SetWidth(16).SetAlign(TextAlign.Center).SetToolTip("Редактировать").SetIconClass("ui-icon-pencil").SetClickHandler("editPerson", "Id", "Name").DisplayWhen(x => x["Id"] == "4" || x["Id"] == "2").SetSortable(false));
         sg.AddColumn(new GridFormatterColumn().SetLabel("Имя").SetName("Name").SetSortable(false).SetWidth(130));
         sg.AddColumn(new GridFormatterColumn().SetLabel("Краткая биография").SetName("ShortBiography").SetSortable(false).SetWidth(370).WrapText(true));
         sg.AddColumn(new GridImageColumn().AddImage(new GridImage().SetWidth(64).SetHeight(64).SetImagePath(x => x["PhotoUrl"]).SetToolTip(x => x["Name"])).SetLabel("Фото").SetName("PhotoUrl").SetWidth(64));
